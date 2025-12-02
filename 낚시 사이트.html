@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>나끌래 - 낚시 초보자 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Pretendard', sans-serif;
+  background: #f4f8ff;
+  color: #15496b;
+}
+header {
+  background: #0b47a1;
+  color: white;
+  padding: 1.2rem 2rem;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+nav {
+  background: #e3f0ff;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+nav button {
+  background: none;
+  border: none;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #15496b;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  transition: all 0.3s;
+}
+nav button:hover, nav button.active {
+  background: #c2dafb;
+}
+main {
+  max-width: 960px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+.content-section {
+  display: none;
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.content-section.active {
+  display: block;
+  animation: fadeIn 0.4s ease;
+}
+h2 {
+  color: #0b3573;
+}
+img.main-img {
+  width: 100%;
+  border-radius: 10px;
+  margin: 1rem 0;
+}
+
+/* 서비스 목표 */
+.goal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
+}
+.goal-item {
+  background: #e3f0ff;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* 지역 지도 */
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 1rem 0;
+}
+.map-wrapper {
+  overflow: hidden;
+  width: 600px;
+  height: 850px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.map-container {
+  position: relative;
+  transition: transform 0.8s ease;
+  transform-origin: center center;
+}
+.map-container img {
+  width: 100%;
+  display: block;
+  user-select: none;
+}
+.region {
+  position: absolute;
+  width: 8%;
+  height: 6%;
+  cursor: pointer;
+  background: transparent;
+}
+
+/* 지역 좌표 */
+#region-seoul { top: 24%; left: 33%; }
+#region-gyeonggi { top: 27%; left: 39%; }
+#region-gangwon { top: 19%; left: 57%; }
+#region-chungbuk { top: 38%; left: 44%; }
+#region-chungnam { top: 42%; left: 31%; }
+#region-jeonbuk { top: 55%; left: 37%; }
+#region-jeonnam { top: 70%; left: 30%; }
+#region-gyeongbuk { top: 44%; left: 63%; }
+#region-gyeongnam { top: 64%; left: 61%; }
+#region-jeju { top: 91%; left: 36%; }
+
+/* 지역 패널 */
+.info-panel {
+  width: 320px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+.info-panel.active { display: block; }
+.info-panel table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.info-panel td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #ddd;
+}
+.close-btn {
+  background: #0b47a1;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-top: 1rem;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* 장비 카드 */
+.gear-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+.gear-card {
+  border: 1px solid #c2dafb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.gear-card:hover { transform: translateY(-4px); }
+.gear-card img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+/* ▷ 16:9 비디오 */
+.video-embed {
+  margin-top: 2rem;
+}
+.video-item {
+  margin-bottom: 2rem;
+}
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;   /* ★ 16:9 고정 */
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.video-desc {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: #0b3573;
+  font-weight: 500;
+}
+
+/* 어종 */
+.fish-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+.fish-card {
+  border: 1px solid #c2dafb;
+  border-radius: 8px;
+  text-align: center;
+  padding: 1rem;
+  cursor: pointer;
+}
+.fish-card img {
+  width: 100%;
+  height: 120px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+#fish-search {
+  width: 100%;
+  padding: 0.7rem;
+  border: 2px solid #c2dafb;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+/* 가격 */
+.price-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.price-table td {
+  border-bottom: 1px solid #ddd;
+  padding: 8px 10px;
+}
+.price-table tr.total td {
+  font-weight: 700;
+  background: #e3f0ff;
+}
+
+/* 모달 */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 450px;
+}
+.modal-close {
+  background: #0b47a1;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+@keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+</style>
+</head>
+
+
+<body>
+
+<header>나끌래</header>
+
+<nav>
+  <button class="active" data-target="home">홈</button>
+  <button data-target="goals">서비스 목표</button>
+  <button data-target="map">지역별 낚시</button>
+  <button data-target="gear">낚시 장비</button>
+  <button data-target="fish">어종 정보</button>
+  <button data-target="price">구매 물품</button>
+</nav>
+
+<main>
+
+  <!-- 홈 -->
+  <section id="home" class="content-section active">
+    <h2>낚시 초보자들을 위한 “나끌래”</h2>
+    <p>처음 낚시를 시작하는 분들이 쉽게 접근할 수 있도록 만든 가이드형 웹사이트입니다.</p>
+    <img class="main-img" src="메인화면.jpg" alt="낚시 이미지">
+    <p><strong>지금 낚시 배우기</strong> 버튼을 눌러 지역별 낚시와 어종 정보를 확인하세요.</p>
+  </section>
+
+<!-- 서비스 목표 -->
+<section id="goals" class="content-section">
+  <h2>서비스 목표</h2>
+  <div class="goal-grid">
+    <div class="goal-item">✔ 초보자 친화적 UI</div>
+    <div class="goal-item">📍 지역 기반 낚시 포인트</div>
+    <div class="goal-item">🎣 장비 종류/사용법</div>
+    <div class="goal-item">🎥 기초 강의 제공</div>
+  </div>
+</section>
+
+<!-- 지역별 낚시 -->
+<section id="map" class="content-section">
+  <h2>지역별 낚시 정보</h2>
+
+  <div class="main-container">
+    <div class="map-wrapper">
+      <div class="map-container" id="map-container">
+        <img src="map1.jpg">
+
+        <div id="region-seoul" class="region" data-region="서울" data-focus="translate(-100px,-50px) scale(2)"></div>
+        <div id="region-gyeonggi" class="region" data-region="경기도" data-focus="translate(-120px,-60px) scale(1.8)"></div>
+        <div id="region-gangwon" class="region" data-region="강원도" data-focus="translate(-180px,-150px) scale(1.8)"></div>
+        <div id="region-chungbuk" class="region" data-region="충청북도" data-focus="translate(-100px,-80px) scale(1.8)"></div>
+        <div id="region-chungnam" class="region" data-region="충청남도" data-focus="translate(-80px,-20px) scale(1.8)"></div>
+        <div id="region-jeonbuk" class="region" data-region="전라북도" data-focus="translate(-60px,80px) scale(1.8)"></div>
+        <div id="region-jeonnam" class="region" data-region="전라남도" data-focus="translate(-80px,150px) scale(2)"></div>
+        <div id="region-gyeongbuk" class="region" data-region="경상북도" data-focus="translate(-200px,-20px) scale(1.8)"></div>
+        <div id="region-gyeongnam" class="region" data-region="경상남도" data-focus="translate(-150px,90px) scale(2)"></div>
+        <div id="region-jeju" class="region" data-region="제주도" data-focus="translate(0px,260px) scale(2)"></div>
+      </div>
+    </div>
+
+    <div class="info-panel" id="infoPanel">
+      <h2 id="regionName">지역 정보</h2>
+      <table>
+        <tr><td>주요 어종</td><td id="fishList"></td></tr>
+        <tr><td>금어기</td><td id="seasonInfo"></td></tr>
+        <tr><td>추천 장비</td><td id="gearList"></td></tr>
+      </table>
+      <button class="close-btn" id="closeBtn">닫기</button>
+    </div>
+  </div>
+</section>
+
+<!-- 장비 -->
+<section id="gear" class="content-section">
+  <h2>낚시 장비 / 사용법</h2>
+
+  <div class="gear-grid">
+    <div class="gear-card"><img src="일반낚시대.jpg"><h3>일반 낚시대</h3></div>
+    <div class="gear-card"><img src="찌 낚시대.jpg"><h3>찌 낚시대</h3></div>
+    <div class="gear-card"><img src="애깅 낚시대.jpg"><h3>에깅 낚시</h3></div>
+  </div>
+
+  <!-- ★ 16:9 비디오 강의 -->
+  <div class="video-embed">
+    <h3>🎥 낚시 기초 강의</h3>
+
+    <div class="video-item">
+      <div class="video-wrapper">
+        <video class="video-box" preload="metadata" playsinline>
+          <source src="8자수정.mp4" type="video/mp4">
+        </video>
+      </div>
+      <p class="video-desc">8자 매듭법 설명 영상입니다.</p>
+    </div>
+
+    <div class="video-item">
+      <div class="video-wrapper">
+        <video class="video-box" preload="metadata" playsinline>
+          <source src="끝보기수정.mp4" type="video/mp4">
+        </video>
+      </div>
+      <p class="video-desc">끝보기 다는법 설명 영상입니다.</p>
+    </div>
+
+    <div class="video-item">
+      <div class="video-wrapper">
+        <video class="video-box" preload="metadata" playsinline>
+          <source src="스피닝릴릴에고정하기.mp4" type="video/mp4">
+        </video>
+      </div>
+      <p class="video-desc">스피닝릴 릴에 고정하는 영상입니다.</p>
+    </div>
+
+    <div class="video-item">
+      <div class="video-wrapper">
+        <video class="video-box" preload="metadata" playsinline>
+          <source src="쌍방울다는법.mp4" type="video/mp4">
+        </video>
+      </div>
+      <p class="video-desc">쌍방울 다는법 설명 영상입니다.</p>
+    </div>
+
+    <div class="video-item">
+      <div class="video-wrapper">
+        <video class="video-box" preload="metadata" playsinline>
+          <source src="낚시대완성.mp4" type="video/mp4">
+        </video>
+      </div>
+      <p class="video-desc">완성된 일반 낚시대입니다.</p>
+    </div>
+  </div>
+
+      <div class="video-item">
+      <div class="video-wrapper">
+        <video class="video-box" preload="metadata" playsinline>
+          <source src="애깅 낚시대.mp4" type="video/mp4">
+        </video>
+      </div>
+      <p class="video-desc">완성된 에깅 낚시대입니다.</p>
+    </div>
+  </div>
+
+      <div class="video-item">
+      <div class="video-wrapper">
+        <video class="video-box" preload="metadata" playsinline>
+          <source src="찌 낚시대.mp4" type="video/mp4">
+        </video>
+      </div>
+      <p class="video-desc">완성된 찌 낚시대입니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 어종 정보 -->
+<section id="fish" class="content-section">
+  <h2>어종 정보</h2>
+
+  <!-- 지역 필터 -->
+  <div id="region-filter" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem;">
+    <button class="region-btn" data-filter="전체" style="padding:0.5rem 1rem; border-radius:6px;">전체</button>
+    <button class="region-btn yes-btn" data-filter="여수" style="background:#0077ff; color:white; padding:0.5rem 1rem; border-radius:6px;">여수</button>
+    <button class="region-btn mok-btn" data-filter="목포" style="background:#00aa55; color:white; padding:0.5rem 1rem; border-radius:6px;">목포</button>
+    <button class="region-btn yg-btn" data-filter="영광" style="background:#ff8800; color:white; padding:0.5rem 1rem; border-radius:6px;">영광</button>
+    <button class="region-btn wd-btn" data-filter="완도" style="background:#aa44ff; color:white; padding:0.5rem 1rem; border-radius:6px;">완도</button>
+    <button class="region-btn hn-btn" data-filter="해남" style="background:#ff3344; color:white; padding:0.5rem 1rem; border-radius:6px;">해남</button>
+  </div>
+
+  <!-- 검색 -->
+  <input type="text" id="fish-search" placeholder="검색..." style="
+      width:100%; padding:0.7rem; border:2px solid #c2dafb;
+      border-radius:6px; margin-bottom:1rem;
+  ">
+
+  <!-- 어종 카드 출력 -->
+  <div class="fish-grid" id="fishGrid"></div>
+</section>
+
+<!-- ▷ 어종 모달 -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" id="modalClose">닫기</button>
+    <img id="modalImg" style="width:100%; height:180px; object-fit:cover; border-radius:6px; margin-bottom:1rem;">
+    <h3 id="modalTitle"></h3>
+    <p id="modalRegion"></p>
+    <p id="modalGear"></p>
+    <p id="modalSize"></p>
+    <p id="modalBait"></p>
+  </div>
+</div>
+
+<script>
+/* ========================================================
+   📌 어종 데이터 (통합 카드 / 이미지 src="" 비워둠)
+======================================================== */
+const fishData = [
+  { name:"볼락", regions:["여수","목포","해남"], img:"볼락.jpg", gear:"루어낚시대", size:"15cm 이하 금지", bait:"웜, 갯지렁이" },
+  { name:"우럭", regions:["여수","목포","해남"], img:"우럭.jpg", gear:"루어낚시대", size:"23cm 이하 금지", bait:"웜, 갯지렁이" },
+  { name:"감성돔", regions:["여수","영광","완도"], img:"감성돔.jpg", gear:"찌 낚시대", size:"25cm 이하 금지", bait:"크릴, 갯지렁이" },
+  { name:"벵에돔", regions:["여수"], img:"벵에돔.jpg", gear:"찌 낚시대", size:"20cm 이하 금지", bait:"크릴, 갯지렁이" },
+  { name:"참돔", regions:["여수","영광","완도"], img:"참돔.jpg", gear:"찌 / 루어", size:"30cm 이하 금지", bait:"새우, 메탈지그" },
+  { name:"농어", regions:["여수","영광","완도"], img:"농어.jpg", gear:"루어낚시대", size:"30cm 이하 금지", bait:"전어살, 새우" },
+  { name:"광어", regions:["목포","해남"], img:"광어.jpg", gear:"원투 낚시대", size:"35cm 이하 금지", bait:"갯지렁이, 전어살" },
+  { name:"장어", regions:["목포"], img:"장어.jpg", gear:"원투 낚시대", size:"30cm 이하 금지", bait:"갯지렁이, 멸치" },
+  { name:"민어", regions:["영광"], img:"민어.jpg", gear:"원투 낚시대", size:"33cm 이하 금지", bait:"고등어살" },
+  { name:"대형어종", regions:["완도"], img:"쥐노래미.jpg", gear:"원투 / 선상", size:"-", bait:"각종 미끼" }
+];
+
+const regionColors = {
+  "여수":"#0077ff",
+  "목포":"#00aa55",
+  "영광":"#ff8800",
+  "완도":"#aa44ff",
+  "해남":"#ff3344"
+};
+
+/* ========================================================
+   📌 어종 카드 렌더링
+======================================================== */
+const fishGrid = document.getElementById("fishGrid");
+
+function renderFishCards(filterRegion="", searchText="") {
+  fishGrid.innerHTML = "";
+
+  fishData.forEach(fish => {
+
+    // 지역 필터 적용
+    if (filterRegion && filterRegion !== "전체" && !fish.regions.includes(filterRegion)) return;
+
+    // 검색 적용
+    if (searchText && !fish.name.includes(searchText)) return;
+
+    const card = document.createElement("div");
+    card.className = "fish-card";
+    card.style.border = `3px solid ${regionColors[fish.regions[0]]}`;
+
+    card.innerHTML = `
+      <img src="${fish.img}" alt="">
+      <h3>${fish.name}</h3>
+      <p><b>지역:</b> ${fish.regions.join(" / ")}</p>
+      <p><b>금지체장:</b> ${fish.size}</p>
+    `;
+
+    card.addEventListener("click", ()=> openModal(fish));
+    fishGrid.appendChild(card);
+  });
+}
+
+renderFishCards();
+
+/* ========================================================
+   📌 지역 필터 버튼
+======================================================== */
+const filterBtns = document.querySelectorAll(".region-btn");
+let currentRegion = "전체";
+
+filterBtns.forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    filterBtns.forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+
+    currentRegion = btn.dataset.filter;
+    renderFishCards(currentRegion, document.getElementById("fish-search").value);
+  });
+});
+
+/* ========================================================
+   📌 검색 기능
+======================================================== */
+document.getElementById("fish-search").addEventListener("input", (e)=>{
+  renderFishCards(currentRegion, e.target.value);
+});
+
+/* ========================================================
+   📌 모달
+======================================================== */
+const modal = document.getElementById("modal");
+const modalClose = document.getElementById("modalClose");
+
+function openModal(fish) {
+  document.getElementById("modalImg").src = fish.img;
+  document.getElementById("modalTitle").textContent = fish.name;
+  document.getElementById("modalRegion").textContent = "출몰 지역: " + fish.regions.join(" / ");
+  document.getElementById("modalGear").textContent = "추천 장비: " + fish.gear;
+  document.getElementById("modalSize").textContent = "금지체장: " + fish.size;
+  document.getElementById("modalBait").textContent = "추천 미끼: " + fish.bait;
+
+  modal.style.display = "flex";
+}
+
+modalClose.addEventListener("click", ()=> modal.style.display="none");
+modal.addEventListener("click", e=>{ if(e.target===modal) modal.style.display="none"; });
+
+</script>
+
+
+<!-- 가격 -->
+<section id="price" class="content-section">
+  <h2>구매 견적</h2>
+  <table class="price-table" id="price-table">
+    <tr><td>낚시대</td><td>18000</td></tr>
+    <tr><td>스피닝 릴</td><td>8000</td></tr>
+    <tr><td>묶음추</td><td>5000</td></tr>
+    <tr><td>캐미</td><td>1000</td></tr>
+    <tr><td>쪽가위</td><td>2000</td></tr>
+    <tr><td>쌍방울</td><td>1000</td></tr>
+    <tr><td>가방</td><td>40000</td></tr>
+    <tr class="total"><td>총합</td><td>75,000</td></tr>
+  </table>
+    <h2>에깅 낚시대 구매 견적</h2>
+  <table class="price-table" id="price-table">
+    <tr><td>낚시대</td><td>40000</td></tr>
+    <tr><td>합사</td><td>12000</td></tr>
+    <tr><td>스피닝 릴</td><td>20000</td></tr>
+    <tr><td>미끼 세트</td><td>10000</td></tr>
+    <tr class="total"><td>총합</td><td>82,000</td></tr>
+  </table>
+    <h2>찌 낚시대 구매 견적</h2>
+  <table class="price-table" id="price-table">
+    <tr><td>낚시대</td><td>70000</td></tr>
+    <tr><td>스피닝 릴</td><td>30000</td></tr>
+    <tr><td>찌 세트</td><td>10000</td></tr>
+    <tr><td>낚시대 가방</td><td>10000</td></tr>
+    <tr class="total"><td>총합</td><td>120,000</td></tr>
+  </table>
+</section>
+
+
+</main>
+
+
+<script>
+// 탭 전환
+document.querySelectorAll('nav button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+
+    let target=btn.dataset.target;
+    document.querySelectorAll('.content-section').forEach(s=>{
+      s.classList.toggle('active', s.id===target);
+    });
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+// 지도 표시 정보
+const regionInfo = {
+  '서울': {fish:'붕어, 잉어', season:'-', gear:'민물 장비'},
+  '경기도': {fish:'배스, 붕어', season:'-', gear:'민물낚시'},
+  '강원도': {fish:'송어, 산천어', season:'산천어 12~2월', gear:'루어'},
+  '충청북도': {fish:'붕어, 잉어', season:'-', gear:'민물'},
+  '충청남도': {fish:'우럭, 광어', season:'11~12월', gear:'원투'},
+  '전라북도': {fish:'감성돔, 도다리', season:'5월', gear:'찌낚시'},
+  '전라남도': {fish:'감성돔, 장어', season:'5월', gear:'찌낚시'},
+  '경상북도': {fish:'참돔, 벵에돔', season:'4~5월', gear:'릴찌'},
+  '경상남도': {fish:'우럭, 도다리', season:'11~12월', gear:'원투'},
+  '제주도': {fish:'돌돔, 자리돔', season:'7~8월', gear:'찌낚시'}
+};
+
+const mapContainer=document.getElementById('map-container');
+const infoPanel=document.getElementById('infoPanel');
+
+document.querySelectorAll('.region').forEach(r=>{
+  r.addEventListener('click', ()=>{
+    const region=r.dataset.region;
+    const focus=r.dataset.focus;
+
+    document.getElementById('regionName').textContent=region;
+    document.getElementById('fishList').textContent=regionInfo[region].fish;
+    document.getElementById('seasonInfo').textContent=regionInfo[region].season;
+    document.getElementById('gearList').textContent=regionInfo[region].gear;
+
+    mapContainer.style.transform=focus;
+    infoPanel.classList.add('active');
+  });
+});
+
+document.getElementById('closeBtn').addEventListener('click',()=>{
+  mapContainer.style.transform="translate(0,0) scale(1)";
+  infoPanel.classList.remove('active');
+});
+
+// ★ 비디오 클릭 재생/정지
+document.querySelectorAll('.video-wrapper').forEach(wrapper=>{
+  const video = wrapper.querySelector('video');
+
+  wrapper.addEventListener('click', ()=>{
+    if(video.paused){
+      document.querySelectorAll('.video-box').forEach(v=>v.pause());
+      video.play();
+    }else{
+      video.pause();
+    }
+  });
+});
+
+// 가격 계산
+let sum=0;
+document.querySelectorAll('#price-table tr:not(.total) td:nth-child(2)').forEach(td=>{
+  sum+=Number(td.textContent);
+});
+document.getElementById('total-price').textContent=sum.toLocaleString()+" 원";
+</script>
+
+</body>
+</html>
